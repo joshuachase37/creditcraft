@@ -1,0 +1,79 @@
+CREATE DATABASE CreditCraft;
+
+CREATE TABLE CreditCraft.User(
+	UserID int,
+    Name varchar(50),
+    DOB date,
+    Age int,
+    PRIMARY KEY(UserID));
+    
+CREATE TABLE CreditCraft.Authentication(
+	LoginID int,
+    UserID int,
+    Password varchar(50),
+    Email varchar(50),
+    Username varchar(50),
+    PRIMARY KEY(LoginID),
+    FOREIGN KEY(UserID) REFERENCES User(UserID));
+    
+CREATE TABLE CreditCraft.BankAccount(
+	AccountID int,
+    UserID int,
+    AccountInfo varchar(100),
+    BankName varchar(50),
+    Balance DECIMAL(11, 2),
+    PRIMARY KEY(AccountID),
+    FOREIGN KEY(UserID) REFERENCES User(UserID));
+        
+CREATE TABLE CreditCraft.Asset(
+	AssetID int,
+    UserID int,
+    Type varchar(50),
+    Name varchar(50),
+    CurrentValue DECIMAL(11, 2),
+    PRIMARY KEY(AssetID),
+    FOREIGN KEY(UserID) REFERENCES User(UserID));
+        
+CREATE TABLE CreditCraft.CreditCard(
+	CardID int,
+    UserID int, 
+    CardInfo varchar(255),
+    AvailableCredit DECIMAL(11, 2),
+    CurrentBalance DECIMAL(11, 2),
+    InterestRate DECIMAL(5, 2),
+    PRIMARY KEY(CardID),
+    FOREIGN KEY(UserID) REFERENCES User(UserID));
+        
+CREATE TABLE CreditCraft.Transactions(
+	TransactionId int,
+    UserID int,
+    CardID int,
+    AccountID int,
+    Merchant varchar(100),
+    Date date,
+    Amount DECIMAL(11, 2),
+    Category varchar(50),
+    PRIMARY KEY(TransactionID),
+    FOREIGN KEY(UserID) REFERENCES User(UserID),
+    FOREIGN KEY(CardID) References CreditCard(CardID),
+    FOREIGN KEY(AccountID) REFERENCES BankAccount(AccountID));
+    
+Insert Into CreditCraft.User(UserID, Name, DOB, Age)
+	Values (1, 'John Smith', '2024-04-21', 0);
+    
+Insert Into CreditCraft.Asset(AssetID, UserID, Type, Name, CurrentValue)
+	Values (1, 1, "Cryptocurrency", "Bitcoin", 127.62);
+    
+Insert Into CreditCraft.Authentication(LoginID, UserID, Password, Email, Username)
+	Values(1, 1, "Password", "johnsmith@gmail.com", "johnsmith");
+    
+Insert Into CreditCraft.BankAccount(AccountID, UserID, AccountInfo, BankName, Balance)
+	Values(1, 1, "Checkings, 123456789", "Wells Fargo", 100000);
+    
+Insert Into CreditCraft.CreditCard(CardID, UserID, CardInfo, AvailableCredit, CurrentBalance, InterestRate)
+	Values(1, 1, "07-25, 1679, Debit", 1000, 12456, 07.56);
+    
+Insert Into CreditCraft.Transactions(TransactionID, UserID, CardID, AccountID, Merchant, Date, Amount, Category)
+	Values(1, 1, 1, 1, "Target", "2024-04-21", 25.67, "Groceries");
+    
+    
