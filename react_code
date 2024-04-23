@@ -1,0 +1,247 @@
+import React, { useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+  const [data, setData] = useState([]);
+  const [postData, setPostData] = useState({});
+  const [putData, setPutData] = useState({});
+  const [deleteData, setDeleteData] = useState({});
+
+  const get_data = (table_name) => {
+    fetch(`http://127.0.0.1:5000/data/${table_name}`)
+      .then(response => response.json())
+      .then(data => setData(data))
+      .catch(error => console.error('Error:', error));
+  };
+
+  const insert_user = () => {
+    const UserID = prompt('Enter UserID:');
+    const Name = prompt('Enter Name:');
+    const DOB = prompt('Enter DOB (YYYY-MM-DD):');
+    const Age = prompt('Enter Age:');
+
+    fetch('http://127.0.0.1:5000/insert_user', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      UserID: UserID,
+      Name: Name,
+      DOB: DOB,
+      Age: Age
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const insert_asset = () => {
+    const AssetID = prompt('Enter AssetID:');
+    const UserID = prompt('Enter UserID:');
+    const Type = prompt('Enter Type:');
+    const Name = prompt('Enter Name:');
+    const CurrentValue = prompt('Enter CurrentValue:');
+
+    fetch('http://127.0.0.1:5000/insert_asset', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      AssetID: AssetID,
+      UserID: UserID,
+      Type: Type,
+      Name: Name,
+      CurrentValue: CurrentValue
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const insert_authentication = () => {
+    const LoginID = prompt('Enter LoginID:');
+    const UserID = prompt('Enter UserID:');
+    const Password = prompt('Enter Password:');
+    const Email = prompt('Enter Email:');
+    const Username = prompt('Enter Username:');
+
+    fetch('http://127.0.0.1:5000/insert_authentication', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      LoginID: LoginID,
+      UserID: UserID,
+      Password: Password,
+      Email: Email,
+      Username: Username
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const insert_bankaccount = () => {
+    const AccountID = prompt('Enter AccountID:');
+    const UserID = prompt('Enter UserID:');
+    const AccountType = prompt('Enter AccountType:');
+    const AccountNumber = prompt('Enter AccountNumber:');
+    const BankName = prompt('Enter BankName:');
+    const Balance = prompt('Enter Balance:');
+
+    fetch('http://127.0.0.1:5000/insert_bankaccount', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      AccountID: AccountID,
+      UserID: UserID,
+      AccountType: AccountType,
+      AccountNumber: AccountNumber,
+      BankName: BankName,
+      Balance: Balance
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const insert_creditcard = () => {
+    const CardID = prompt('Enter CardID:');
+    const UserID = prompt('Enter UserID:');
+    const ExpiryDate = prompt('Enter ExpiryDate:');
+    const CardNumber = prompt('Enter CardNumber:');
+    const AvailableCredit = prompt('Enter AvailableCredit:');
+    const CurrentBalance = prompt('Enter CurrentBalance:');
+    const InterestRate = prompt('Enter InterestRate:');
+    const CardType = prompt('Enter CardType:');
+
+    fetch('http://127.0.0.1:5000/insert_creditcard', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      CardID: CardID,
+      UserID: UserID,
+      ExpiryDate: ExpiryDate,
+      CardNumber: CardNumber,
+      CardType: CardType,
+      AvailableCredit: AvailableCredit,
+      CurrentBalance: CurrentBalance,
+      InterestRate: InterestRate
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const insert_transactions = () => {
+    const TransactionID = prompt('Enter TransactionID:');
+    const UserID = prompt('Enter UserID:');
+    const AccountID = prompt('Enter AccountID:');
+    const Merchant = prompt('Enter Merchant:');
+    const CardID = prompt('Enter CardID:');
+    const Date = prompt('Enter Date:');
+    const Amount = prompt('Enter Amount:');
+    const Category = prompt('Enter Category:');
+
+    fetch('http://127.0.0.1:5000/insert_transactions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      TransactionID: TransactionID,
+      UserID: UserID,
+      CardID: CardID,
+      AccountID: AccountID,
+      Merchant: Merchant,
+      Date: Date,
+      Amount: Amount,
+      Category: Category
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const update_data = () => {
+    const table_name = prompt('Enter Table Name:');
+    const update_values = prompt('Enter update_values:');
+    const condition = prompt('Enter condition:');
+
+    fetch('http://127.0.0.1:5000/update_data', {
+    method: 'PUT',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      table_name: table_name,
+      update_values: update_values,
+      condition: condition
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  const delete_data = () => {
+    const table_name = prompt('Enter Table Name:');
+    const condition = prompt('Enter condition:');
+
+    fetch('http://127.0.0.1:5000/delete_data', {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      table_name: table_name,
+      condition: condition
+    })
+  })
+    .then(response => response.text())
+    .then(message => console.log(message))
+    .catch(error => console.error('Error:', error));
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <button onClick={() => get_data('table_name')}>Get Data</button>
+        <button onClick={insert_user}>Insert User</button>
+        <button onClick={insert_asset}>Insert Asset</button>
+        <button onClick={insert_authentication}>Insert Authentication</button>
+        <button onClick={insert_bankaccount}>Insert Bank Account</button>
+        <button onClick={insert_creditcard}>Insert Credit Card</button>
+        <button onClick={insert_transactions}>Insert Transactions</button>
+        <button onClick={update_data}>Update Data</button>
+        <button onClick={delete_data}>Delete Data</button>
+        {/* Add buttons for other functions */}
+        <div>
+          {data.map(item => (
+            <p key={item.id}>{item.column1}: {item.column2}</p>
+          ))}
+        </div>
+      </header>
+    </div>
+  );
+}
+
+export default App;
