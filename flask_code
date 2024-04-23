@@ -1,0 +1,69 @@
+import React, { useState } from 'react';
+import logo from './logo.svg';
+import './App.css';
+
+function App() {
+  const [data, setData] = useState([]);
+  const [postData, setPostData] = useState({});
+  const [putData, setPutData] = useState({});
+  const [deleteData, setDeleteData] = useState({});
+
+  const get_data = (table_name) => {
+    fetch(`http://127.0.0.1:5000/data/${table_name}`)
+      .then(response => response.json())
+      .then(data => setData(data))
+      .catch(error => console.error('Error:', error));
+  };
+
+  const insert_user = (UserID, Name, DOB, Age) => {
+    // Implementation for insert_user
+  };
+
+  const insert_asset = (AssetID, UserID, Type, Name, CurrentValue) => {
+    // Implementation for insert_asset
+  };
+
+  const insert_authentication = (LoginID, UserID, Password, Email, Username) => {
+    // Implementation for insert_authentication
+  };
+
+  const insert_bankaccount = (AccountID, UserID, AccountType, AccountNumber, BankName, Balance) => {
+    // Implementation for insert_bankaccount
+  };
+
+  const insert_creditcard = (CardID, UserID, ExpiryDate, CardNumber, CardType, AvailableCredit, CurrentBalance, InterestRate) => {
+    // Implementation for insert_creditcard
+  };
+
+  const insert_transactions = (TransactionID, UserID, CardID, AccountID, Merchant, Date, Amount, Category) => {
+    // Implementation for insert_transactions
+  };
+
+  const update_data = (table_name, update_values, condition) => {
+    // Implementation for update_data
+  };
+
+  const delete_data = (table_name, condition) => {
+    // Implementation for delete_data
+  };
+
+  return (
+    <div className="App">
+      <header className="App-header">
+        <img src={logo} className="App-logo" alt="logo" />
+        <p>
+          Edit <code>src/App.js</code> and save to reload.
+        </p>
+        <button onClick={() => get_data('table_name')}>Get Data</button>
+        {/* Add buttons and input fields for other operations */}
+        <div>
+          {data.map(item => (
+            <p key={item.id}>{item.column1}: {item.column2}</p>
+          ))}
+        </div>
+      </header>
+    </div>
+  );
+}
+
+export default App;
