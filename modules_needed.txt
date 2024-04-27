@@ -1,0 +1,4 @@
+Modules needed to install:
+- npm install react-router-dom
+- pip install flask-cors
+
