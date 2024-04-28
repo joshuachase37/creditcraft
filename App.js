@@ -7,6 +7,10 @@ import Assets from './Assets';
 import BankAccounts from './Bank-Accounts';
 import CreditCards from './Credit-Cards';
 import Transactions from './Transactions';
+import ViewAssets from './ViewAssets';
+import ViewBankAccounts from './ViewBankAccounts';
+import ViewCreditCards from './ViewCreditCards';
+import ViewTransactions from './ViewTransactions';
 
 function App() {
   return (
@@ -19,6 +23,10 @@ function App() {
         <Route path="/bankaccounts" element={<BankAccounts />} />
         <Route path="/creditcards" element={<CreditCards />} />
         <Route path="/transactions" element={<Transactions />} />
+        <Route path="/assets/view" element={<ViewAssets />} />
+        <Route path="/bankaccounts/view" element={<ViewBankAccounts />} />
+        <Route path="/creditcards/view" element={<ViewCreditCards />} />
+        <Route path="/transactions/view" element={<ViewTransactions />} />
       </Routes>
     </Router>
   );
