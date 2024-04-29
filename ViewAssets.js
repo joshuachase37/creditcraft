@@ -2,17 +2,18 @@ import React, { useState, useEffect } from 'react';
 
 function ViewAssets() {
   const [assets, setAssets] = useState([]);
-
+  const userID = sessionStorage.getItem('userID');
+  
   useEffect(() => {
     async function fetchAssets() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/get_data?table_name=Asset', {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            'Accept': 'application/json'
-          },
-        });
+        const response = await fetch(`http://127.0.0.1:5000/get_data?table_name=Asset&userID=${userID}`, {
+		  method: 'GET',
+		  headers: {
+			'Content-Type': 'application/json',
+			'Accept': 'application/json'
+		  },
+		});
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -30,8 +31,11 @@ function ViewAssets() {
       }
     }
 
-    fetchAssets();
-  }, []);
+    if (userID) { // If the userID exist, then call the API
+	  console.log("Asset: ");
+      fetchAssets();
+    }
+  }, [userID]);
 
   return (
     <div>

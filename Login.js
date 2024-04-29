@@ -29,7 +29,7 @@ To Do:
 
 */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
@@ -44,6 +44,7 @@ function Login() {
   const [name, setName] = useState(''); // Add state for name
   const [dob, setDob] = useState(''); // Add state for date of birth
   const [confirmPassword, setConfirmPassword] = useState(''); // Add state for confirm password
+  const SESSION_TIMEOUT = 600000; // 600000ms = 10min
 
   // Error messages:
   const emptyFieldsMSG = 'Please provide username/email and password.';
@@ -53,14 +54,21 @@ function Login() {
   const passwordMismatchMSG = 'Passwords do not match.';
   const registrationSuccessMSG = 'Registration successful';
   const registrationFailureMSG = 'Registration failed. Please try again.';
+  const sessionExpiredMSG = 'Session expired. Please login again.';
   
-   /**
-  * Handles form submission for user login and authentication of input
-  * 
-  * @param {Event} e - The form submission event.
-  */
-  
-// Function to handle login form submission
+  // Function to handle successful login
+  const handleLoginSuccess = (userID) => {
+    sessionStorage.setItem('userID', userID); // Store userID in sessionStorage
+    setTimeout(() => {
+      // Clear sessionStorage and redirect to login page
+      sessionStorage.clear();
+      alert(sessionExpiredMSG);
+      navigate('/');
+    }, SESSION_TIMEOUT);
+    navigate('/home');
+  };
+
+ // Function to handle login form submission
  const handleSubmit = async (e) => {
   e.preventDefault();
 
@@ -70,24 +78,17 @@ function Login() {
   }
 
   try {
-    // Send login data to the server   
     const url = `http://127.0.0.1:5000/get_data?table_name=Authentication&usernameOrEmail=${usernameOrEmail}&password=${password}`;
+    const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
 
-    const response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
     if (response.ok) {
       const data = await response.json();
       console.log('Correct credentials received:', data);
-      alert(userAuthenticatedMSG);
-      navigate('/home');
+      handleLoginSuccess(data.UserID); // Pass UserID to handleLoginSuccess to be stored in the session
     } else {
-      alert(userUnauthenticateMSG);
+      alert('Incorrect login credentials.');
     }
-  } catch (error) { // Unsuccessful connection
+  } catch (error) {
     console.error('Error:', error);
     alert(unsuccessfulConnectionMSG);
   }
@@ -139,7 +140,6 @@ function Login() {
     alert(unsuccessfulConnectionMSG);
   }
  };
-
 
  return (
   <div className="login-container">

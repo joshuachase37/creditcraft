@@ -22,6 +22,7 @@ Elijah changes 4/27/2024:
 '''
 
 import mysql.connector
+import hashlib
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 from datetime import datetime
@@ -32,7 +33,7 @@ CORS(app)  # This will enable CORS for all routes
 db_config = {
     'host': 'localhost',
     'user': 'root',
-    'password': '$',
+    'password': 'creditCraftPWD',
     'database': 'creditcraft'
 }
 
@@ -41,85 +42,48 @@ def get_data():
     conn = mysql.connector.connect(**db_config)
     cursor = conn.cursor()
     table_name = request.args.get('table_name')
-    username_or_email = request.args.get('usernameOrEmail')
-    password = request.args.get('password')
     
     if table_name == "User":
         cursor.execute("SELECT * FROM User")
         output = cursor.fetchall()
-    elif table_name == 'Asset':
-        cursor.execute("SELECT * FROM Asset")
-        output = cursor.fetchall()
     elif table_name == 'Authentication':
-        # Check if the provided username/email and password exist in the authentication table
-        cursor.execute("SELECT * FROM Authentication WHERE (Username = %s OR Email = %s) AND Password = %s", (username_or_email, username_or_email, password))
+        username_or_email = request.args.get('usernameOrEmail')
+        password = request.args.get('password')
+        cursor.execute("SELECT UserID, Password FROM Authentication WHERE Username = %s OR Email = %s", (username_or_email, username_or_email))
         user_data = cursor.fetchone()  # Fetch one matching record
-        
+            
         if user_data:
-            # User has been authenticated
-            return jsonify({'success': True, 'data': user_data})
+            UserID, hashed_password = user_data
+
+            if hashlib.sha256(password.encode()).hexdigest() == hashed_password:
+                return jsonify({'success': True, 'UserID': UserID})  # Return UserID along with success to be used in session
+            else:
+                return jsonify({'success': False, 'message': 'Invalid password.'}), 401
         else:
-            # User has not been authenticated
-            return jsonify({'success': False, 'message': 'Invalid username/email or password.'}), 401
+            return jsonify({'success': False, 'message': 'Invalid username/email.'}), 401
+    elif table_name == 'Asset':
+        userID = request.args.get('userID') 
+        print("Asset: ", userID)
+        cursor.execute("SELECT * FROM Asset WHERE UserID = %s", (userID,))
+        output = cursor.fetchall()
     elif table_name == 'BankAccount':
-        cursor.execute("SELECT * FROM BankAccount")
+        userID = request.args.get('userID') 
+        print("Bank: ", userID)
+        cursor.execute("SELECT * FROM BankAccount WHERE UserID = %s", (userID,))
         output = cursor.fetchall()
     elif table_name == 'CreditCard':
-        cursor.execute("SELECT * FROM CreditCard")
+        userID = request.args.get('userID')
+        print("Credit: ", userID)
+        cursor.execute("SELECT * FROM CreditCard WHERE UserID = %s", (userID,))
         output = cursor.fetchall()
     elif table_name == 'Transactions':
-        cursor.execute("SELECT * FROM Transaction")
+        userID = request.args.get('userID')
+        print("Transactions: ", userID)
+        cursor.execute("SELECT * FROM Transactions WHERE UserID = %s", (userID,))
         output = cursor.fetchall()
     else:
         return jsonify({"error": "Invalid table name"}), 400
-    
     return jsonify({"data": output})
-
-# @app.route('/register', methods=['POST'])
-# def register():
-    # try:
-        # conn = mysql.connector.connect(**db_config)
-        # cursor = conn.cursor()
-
-        # # Extract registration data from the request
-        # data = request.json
-        # Name = data.get('name')
-        # DOB = data.get('dob')
-        # Password = data.get('password')
-        # Email = data.get('email')
-        # Username = data.get('username')
-        
-        # dob_date = datetime.strptime(DOB, '%Y-%m-%d')
-        # current_date = datetime.now()
-        # Age = current_date.year - dob_date.year - ((current_date.month, current_date.day) < (dob_date.month, dob_date.day))
-        
-        # # Check if required fields are provided
-        # if not (Name and DOB and Age and Password and Email and Username):
-            # return jsonify({'success': False, 'message': 'Please provide all required fields.'}), 400
-
-        # # Insert user data into User table
-        # query_user = "Insert Into User(Name, DOB, Age) VALUES (%s, %s, %s)"
-        # values_user = (Name, DOB, Age)
-        # cursor.execute(query_user, values_user)
-        # UserID = cursor.lastrowid  # Get the auto-generated UserID
-
-        # # Insert authentication data into Authentication table
-        # query_auth = "Insert Into Authentication(UserID, Password, Email, Username) VALUES (%s, %s, %s, %s)"
-        # values_auth = (UserID, Password, Email, Username)
-        # cursor.execute(query_auth, values_auth)
-
-        # conn.commit()
-        
-        # return jsonify({'success': True, 'message': 'Registration successful'}), 201
-
-    # except Exception as e:
-        # return jsonify({'success': False, 'message': 'Registration failed: ' + str(e)}), 500
-
-    # finally:
-        # cursor.close()
-        # conn.close()
-        
-import hashlib
 
 @app.route('/register', methods=['POST'])
 def register():
