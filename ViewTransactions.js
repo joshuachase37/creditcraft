@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 function ViewTransactions() {
   const [transactions, setTransactions] = useState([]);
+  const userID = sessionStorage.getItem('userID');
 
   useEffect(() => {
     async function fetchTransactions() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/get_data?table_name=Transactions', {
+        const response = await fetch(`http://127.0.0.1:5000/get_data?table_name=Transactions&userID=${userID}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -32,9 +33,11 @@ function ViewTransactions() {
         console.error('Error fetching transactions:', error);
       }
     }
-
-    fetchTransactions();
-  }, []);
+	
+    if (userID) { // If the userID exist, then call the API
+      fetchTransactions();
+    }
+  }, [userID]);
 
   return (
     <div>

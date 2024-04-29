@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 function ViewBankAccounts() {
   const [bankaccounts, setBankAccounts] = useState([]);
+  const userID = sessionStorage.getItem('userID'); // Ensure userID is retrieved correctly
 
   useEffect(() => {
     async function fetchBankAccounts() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/get_data?table_name=BankAccount', {
+        const response = await fetch(`http://127.0.0.1:5000/get_data?table_name=BankAccount&userID=${userID}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -30,8 +31,11 @@ function ViewBankAccounts() {
       }
     }
 
-    fetchBankAccounts();
-  }, []);
+    if (userID) { // If the userID exists, then call the API
+	  console.log("Bank: ");
+      fetchBankAccounts();
+    }
+  }, [userID]);
 
   return (
     <div>

@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 
 function ViewCreditCards() {
   const [creditcards, setCreditCards] = useState([]);
+  const userID = sessionStorage.getItem('userID');
 
   useEffect(() => {
     async function fetchCreditCards() {
       try {
-        const response = await fetch('http://127.0.0.1:5000/get_data?table_name=CreditCard', {
+        const response = await fetch(`http://127.0.0.1:5000/get_data?table_name=CreditCard&userID=${userID}`, {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
@@ -31,8 +32,10 @@ function ViewCreditCards() {
       }
     }
 
-    fetchCreditCards();
-  }, []);
+    if (userID) { // If the userID exist, then call the API
+      fetchCreditCards();
+    }
+  }, [userID]);
 
   return (
     <div>
