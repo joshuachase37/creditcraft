@@ -11,6 +11,9 @@ import ViewAssets from './ViewAssets';
 import ViewBankAccounts from './ViewBankAccounts';
 import ViewCreditCards from './ViewCreditCards';
 import ViewTransactions from './ViewTransactions';
+import NewAssets from './NewAssets';
+import NewBankAccounts from './NewBankAccounts';
+import NewCreditCards from './NewCreditCards';
 
 function App() {
   return (
@@ -27,6 +30,9 @@ function App() {
         <Route path="/bankaccounts/view" element={<ViewBankAccounts />} />
         <Route path="/creditcards/view" element={<ViewCreditCards />} />
         <Route path="/transactions/view" element={<ViewTransactions />} />
+        <Route path="/assets/add" element={<NewAssets />} />
+        <Route path="/bankaccounts/add" element={<NewBankAccounts />} />
+        <Route path="/creditcards/add" element={<NewCreditCards />} />
       </Routes>
     </Router>
   );
