@@ -14,6 +14,7 @@ import ViewTransactions from './ViewTransactions';
 import NewAssets from './NewAssets';
 import NewBankAccounts from './NewBankAccounts';
 import NewCreditCards from './NewCreditCards';
+import NewTransaction from './NewTransaction';
 
 function App() {
   return (
@@ -33,6 +34,7 @@ function App() {
         <Route path="/assets/add" element={<NewAssets />} />
         <Route path="/bankaccounts/add" element={<NewBankAccounts />} />
         <Route path="/creditcards/add" element={<NewCreditCards />} />
+        <Route path="/transactions/add" element={<NewTransaction />} />
       </Routes>
     </Router>
   );

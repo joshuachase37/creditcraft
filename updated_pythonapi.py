@@ -19,6 +19,9 @@ Elijah changes 4/27/2024:
 - SQL Changes: Added auto increment and not null to primary key, please see example_sql_entries.sql for table definitions
 - POST Request registration/authentication: combined the insertion of a new user and their authentication because we do not have admin roles, just user roles
 
+Potential improvements:
+- SQL injection protection
+
 '''
 
 import mysql.connector
