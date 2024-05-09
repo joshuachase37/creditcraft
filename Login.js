@@ -57,8 +57,9 @@ function Login() {
   const sessionExpiredMSG = 'Session expired. Please login again.';
   
   // Function to handle successful login
-  const handleLoginSuccess = (userID) => {
-    sessionStorage.setItem('userID', userID); // Store userID in sessionStorage
+  const handleLoginSuccess = (userData) => {
+    sessionStorage.setItem('userID', userData.UserID); // Store userID in sessionStorage
+    sessionStorage.setItem('loginID', userData.LoginID); // Store loginID in sessionStorage
     setTimeout(() => {
       // Clear sessionStorage and redirect to login page
       sessionStorage.clear();
@@ -68,31 +69,31 @@ function Login() {
     navigate('/home');
   };
 
- // Function to handle login form submission
- const handleSubmit = async (e) => {
-  e.preventDefault();
+  // Function to handle login form submission
+  const handleSubmit = async (e) => {
+    e.preventDefault();
 
-  if (!usernameOrEmail || !password) {
-    alert(emptyFieldsMSG);
-    return;
-  }
-
-  try {
-    const url = `http://127.0.0.1:5000/get_data?table_name=Authentication&usernameOrEmail=${usernameOrEmail}&password=${password}`;
-    const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
-
-    if (response.ok) {
-      const data = await response.json();
-      console.log('Correct credentials received:', data);
-      handleLoginSuccess(data.UserID); // Pass UserID to handleLoginSuccess to be stored in the session
-    } else {
-      alert('Incorrect login credentials.');
+    if (!usernameOrEmail || !password) {
+      alert(emptyFieldsMSG);
+      return;
     }
-  } catch (error) {
-    console.error('Error:', error);
-    alert(unsuccessfulConnectionMSG);
-  }
- };
+
+    try {
+      const url = `http://127.0.0.1:5000/get_data?table_name=Authentication&usernameOrEmail=${usernameOrEmail}&password=${password}`;
+      const response = await fetch(url, { method: 'GET', headers: { 'Content-Type': 'application/json' } });
+
+      if (response.ok) {
+        const userData = await response.json();
+        console.log('Correct credentials received:', userData);
+        handleLoginSuccess(userData); // Pass userData to handleLoginSuccess to be stored in the session
+      } else {
+        alert('Incorrect login credentials.');
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      alert(unsuccessfulConnectionMSG);
+    }
+  };
 
  // Function to handle registration form submission
  const handleRegistrationSubmit = async (e) => {

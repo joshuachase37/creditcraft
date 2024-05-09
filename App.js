@@ -15,6 +15,7 @@ import NewAssets from './NewAssets';
 import NewBankAccounts from './NewBankAccounts';
 import NewCreditCards from './NewCreditCards';
 import NewTransaction from './NewTransaction';
+import ViewUser from './ViewUser';
 
 function App() {
   return (
@@ -35,6 +36,7 @@ function App() {
         <Route path="/bankaccounts/add" element={<NewBankAccounts />} />
         <Route path="/creditcards/add" element={<NewCreditCards />} />
         <Route path="/transactions/add" element={<NewTransaction />} />
+        <Route path="/user-info" element={<ViewUser />} />
       </Routes>
     </Router>
   );

@@ -1,29 +1,3 @@
-
-'''
-
-Author: Elijah Carter, Shivam Shelar, Joshua Chase
-Date: 4/21/2024
-Last Modified: 4/27/2024
-Objective: Setup basic API connection and request for creditcraft
-
-How to run:
-- Navigate to location of file in local machine
-- run the following command: python pythonyapi
-
-
-Elijah changes 4/27/2024:
-- GET Request: Wrapping the output in jsonify, you ensure that it's returned as a JSON
-- GET Request: Added 400 error code for invalid table request
-- GET Request: Added handling for user authentication to verify password
-- Imports: Added CORS to handle cross port requests
-- SQL Changes: Added auto increment and not null to primary key, please see example_sql_entries.sql for table definitions
-- POST Request registration/authentication: combined the insertion of a new user and their authentication because we do not have admin roles, just user roles
-
-Potential improvements:
-- SQL injection protection
-
-'''
-
 import mysql.connector
 import hashlib
 from flask import Flask, jsonify, request
@@ -50,20 +24,40 @@ def get_data():
         cursor.execute("SELECT * FROM User")
         output = cursor.fetchall()
     elif table_name == 'Authentication':
-        username_or_email = request.args.get('usernameOrEmail')
-        password = request.args.get('password')
-        cursor.execute("SELECT UserID, Password FROM Authentication WHERE Username = %s OR Email = %s", (username_or_email, username_or_email))
-        user_data = cursor.fetchone()  # Fetch one matching record
-            
-        if user_data:
-            UserID, hashed_password = user_data
+        loginID = request.args.get('loginID')
+        if loginID:
+            # Fetch user information based on loginID
+            cursor.execute("SELECT Email, Username, Password FROM Authentication WHERE LoginID = %s", (loginID,))
+            user_data = cursor.fetchone()
+            if not user_data:
+                return jsonify({'success': False, 'message': 'No user found.'}), 401
+            else:
+                email, username, hashed_password = user_data
+                user_info = {'Email': email, 'Username': username, 'Password': hashed_password}
+                return jsonify({'success': True, 'data': [user_info]})
 
+        else:
+            username_or_email = request.args.get('usernameOrEmail')
+            password = request.args.get('password')
+
+            if username_or_email and password:
+                cursor.execute("SELECT LoginID, UserID, Password, Email, Username FROM Authentication WHERE Username = %s OR Email = %s", (username_or_email, username_or_email))
+            else:
+                return jsonify({'success': False, 'message': 'Invalid request parameters.'}), 400
+
+            user_data = cursor.fetchone()
+
+            if not user_data:
+                return jsonify({'success': False, 'message': 'No user found.'}), 401
+
+            # Extract data from the fetched row
+            LoginID, UserID, hashed_password, email, username = user_data
+
+            # Verify the password
             if hashlib.sha256(password.encode()).hexdigest() == hashed_password:
-                return jsonify({'success': True, 'UserID': UserID})  # Return UserID along with success to be used in session
+                return jsonify({'success': True, 'UserID': UserID, 'Username': username, 'Email': email, 'LoginID': LoginID})
             else:
                 return jsonify({'success': False, 'message': 'Invalid password.'}), 401
-        else:
-            return jsonify({'success': False, 'message': 'Invalid username/email.'}), 401
     elif table_name == 'Asset':
         userID = request.args.get('userID') 
         print("Asset: ", userID)
@@ -87,6 +81,7 @@ def get_data():
     else:
         return jsonify({"error": "Invalid table name"}), 400
     return jsonify({"data": output})
+
 
 @app.route('/register', methods=['POST'])
 def register():
@@ -137,8 +132,6 @@ def register():
     finally:
         cursor.close()
         conn.close()
-
-
 
 @app.route('/insert_asset', methods=['POST'])
 def insert_asset():
@@ -227,7 +220,6 @@ def insert_creditcard():
 @app.route('/insert_transactions', methods=['POST'])
 def insert_transactions():
     data = request.json
-    TransactionID = data.get('TransactionID')
     UserID = data.get('UserID')
     CardID = data.get('CardID')
     AccountID = data.get('AccountID')
@@ -239,10 +231,19 @@ def insert_transactions():
     try:
         conn = mysql.connector.connect(**db_config)
         cursor = conn.cursor()
-        query = "Insert Into Transactions(TransactionID, UserID, CardID, AccountID, Merchant, Date, Amount, Category) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
-        values = (TransactionID, UserID, CardID, AccountID, Merchant, Date, Amount, Category)
 
+        query = "INSERT INTO Transactions(UserID, CardID, AccountID, Merchant, Date, Amount, Category) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+        values = (UserID, CardID, AccountID, Merchant, Date, Amount, Category)
         cursor.execute(query, values)
+
+        # Update the CurrentBalance of the credit card
+        update_card_query = "UPDATE CreditCard SET CurrentBalance = CurrentBalance - %s WHERE CardID = %s"
+        cursor.execute(update_card_query, (Amount, CardID))
+
+        # Update the Balance of the bank account
+        update_account_query = "UPDATE BankAccount SET Balance = Balance - %s WHERE AccountID = %s"
+        cursor.execute(update_account_query, (Amount, AccountID))
+
         conn.commit()
 
         cursor.close()
@@ -252,6 +253,7 @@ def insert_transactions():
 
     except Exception as e:
         return jsonify({'message': 'Failed to add data', 'error': str(e)}), 500
+
 
 @app.route('/update_data', methods=['PUT'])
 def update_data():

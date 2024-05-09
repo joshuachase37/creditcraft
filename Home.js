@@ -1,12 +1,14 @@
 import React from 'react';
-import { Navigate, Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 function Home() {
+  const navigate = useNavigate();
+
   function handleLogout() {
     // Clear user session or state
     localStorage.removeItem('isLoggedIn');
     // Redirect to the login page
-    return <Navigate to="/" />;
+    navigate('/');
   }
 
   return (
@@ -15,6 +17,10 @@ function Home() {
       <p>Please select an option:</p>
       <Link to="/features">
         <button>Use Features</button>
+      </Link>
+      <br />
+      <Link to="/user-info">
+        <button>View User Info</button>
       </Link>
       <br />
       <button onClick={handleLogout}>Logout</button>
