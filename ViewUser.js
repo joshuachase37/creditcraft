@@ -45,7 +45,7 @@ function ViewUser() {
   }, [userID]); // Add userID to the dependency array
 
   const handleUpdate = async (userID) => {
-    const options = ['Email', 'Username', 'Password'];
+    const options = ['Email', 'Username'];
     const selectedOption = prompt(`Select the parameter to update:\n${options.join('\n')}`);
     if (selectedOption === null) {
       return; // User clicked Cancel
@@ -83,30 +83,32 @@ function ViewUser() {
     }
   };
 
-  const handleDelete = async (userID) => {
-    try {
-      const response = await fetch('http://127.0.0.1:5000/delete_data', {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          table_name: 'Authentication',
-          condition: `UserID=${userID}`,
-        }),
-      });
+	
+  // works correctly but decided to remove because this is more of an admin feature and we do not have an admin yet
+  // const handleDelete = async (userID) => {
+    // try {
+      // const response = await fetch('http://127.0.0.1:5000/delete_data', {
+        // method: 'DELETE',
+        // headers: {
+          // 'Content-Type': 'application/json',
+        // },
+        // body: JSON.stringify({
+          // table_name: 'Authentication',
+          // condition: `UserID=${userID}`,
+        // }),
+      // });
 
-      if (response.ok) {
-        alert('User deleted successfully');
-        fetchUsers(); // Refresh the user list after deleting
-      } else {
-        alert('Failed to delete user. Please try again.');
-      }
-    } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Failed to delete user. Please try again.');
-    }
-  };
+      // if (response.ok) {
+        // alert('User deleted successfully');
+        // fetchUsers(); // Refresh the user list after deleting
+      // } else {
+        // alert('Failed to delete user. Please try again.');
+      // }
+    // } catch (error) {
+      // console.error('Error deleting user:', error);
+      // alert('Failed to delete user. Please try again.');
+    // }
+  // };
 
   return (
     <div>
